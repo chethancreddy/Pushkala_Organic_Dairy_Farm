@@ -1129,27 +1129,40 @@ h1, h2, h3, h4, h5, h6 {
   background: #ffffff;
   border: 1px solid var(--color-tertiary);
   border-radius: var(--radius-xl);
-  padding: 40px;
+  padding: 36px;
   box-shadow: var(--shadow-card);
-  margin-top: 48px;
+  margin-top: 32px;
 }
 
 .calc-grid {
   display: grid;
-  grid-template-columns: 1.2fr 0.8fr;
-  gap: 40px;
-  align-items: center;
+  grid-template-columns: 1.15fr 0.85fr;
+  gap: 36px;
+  align-items: stretch;
 }
 
 .calc-inputs {
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 22px;
+}
+
+.calc-main-title {
+  font-size: clamp(1.45rem, 4vw, 1.85rem);
+  color: var(--color-primary);
+  margin-bottom: 6px;
+  font-weight: 700;
+}
+
+.calc-main-sub {
+  color: var(--color-muted);
+  font-size: 0.92rem;
+  line-height: 1.5;
 }
 
 .calc-group-label {
-  font-size: 0.94rem;
-  font-weight: 600;
+  font-size: 0.92rem;
+  font-weight: 700;
   color: var(--color-primary);
   margin-bottom: 10px;
   display: block;
@@ -1158,96 +1171,136 @@ h1, h2, h3, h4, h5, h6 {
 .milk-choice-pills {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 12px;
+  gap: 10px;
 }
 
 .choice-pill {
-  border: 1px solid var(--color-border);
+  border: 1.5px solid var(--color-border);
   border-radius: var(--radius-md);
-  padding: 12px 14px;
+  padding: 12px 10px;
   text-align: center;
   cursor: pointer;
   background: var(--color-surface-soft);
-  transition: all var(--transition-fast);
+  transition: all 0.2s ease;
+  user-select: none;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 4px;
+}
+
+.choice-pill:active {
+  transform: scale(0.97);
 }
 
 .choice-pill.active, .choice-pill:hover {
   background: #ffffff;
   border-color: var(--color-primary);
-  box-shadow: 0 2px 10px rgba(32, 59, 20, 0.1);
+  box-shadow: 0 4px 14px rgba(32, 59, 20, 0.12);
 }
 
 .choice-pill .name {
-  font-size: 0.88rem;
+  font-size: 0.85rem;
   font-weight: 700;
   color: var(--color-primary);
-  display: block;
+  line-height: 1.2;
 }
 
 .choice-pill .rate {
-  font-family: var(--font-mono);
-  font-size: 0.74rem;
+  font-family: var(--font-sans);
+  font-size: 0.75rem;
   color: var(--color-muted);
 }
 
 .qty-stepper-wrap {
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: 16px;
+  background: var(--color-surface-soft);
+  padding: 8px 16px;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--color-border);
+  width: fit-content;
 }
 
 .stepper-btn {
-  width: 44px;
-  height: 44px;
+  width: 42px;
+  height: 42px;
   border-radius: 50%;
   border: 1px solid var(--color-tertiary);
   background: #ffffff;
-  font-size: 1.3rem;
-  font-weight: 600;
+  font-size: 1.4rem;
+  font-weight: 700;
   color: var(--color-primary);
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   transition: all var(--transition-fast);
+  touch-action: manipulation;
 }
 
-.stepper-btn:hover {
+.stepper-btn:hover, .stepper-btn:active {
   background: var(--color-primary);
   color: #ffffff;
   border-color: var(--color-primary);
 }
 
 .qty-display {
-  font-size: 1.6rem;
+  font-size: 1.4rem;
   font-weight: 700;
   color: var(--color-primary);
-  min-width: 90px;
+  min-width: 100px;
   text-align: center;
-  font-family: var(--font-mono);
+  font-family: var(--font-sans);
 }
 
 .calc-summary-card {
   background: var(--color-primary);
   color: var(--color-neutral);
   border-radius: var(--radius-lg);
-  padding: 30px;
+  padding: 28px;
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  justify-content: space-between;
+  gap: 18px;
+  box-shadow: 0 10px 30px rgba(32, 59, 20, 0.15);
 }
 
 .summary-heading {
-  font-family: var(--font-mono);
-  font-size: 0.75rem;
-  letter-spacing: 0.14em;
+  font-family: var(--font-sans);
+  font-size: 0.74rem;
+  letter-spacing: 0.12em;
+  font-weight: 700;
   text-transform: uppercase;
   color: #c5ccb6;
 }
 
+.summary-cost-row {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.summary-cost-label {
+  font-size: 0.84rem;
+  color: #d8e4cb;
+}
+
 .summary-price-big {
-  font-size: 2.5rem;
+  font-size: 2.2rem;
   font-weight: 800;
+  color: #ffffff;
+  line-height: 1.1;
+}
+
+.summary-price-monthly {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #ffffff;
+  line-height: 1.1;
+}
   color: #ffffff;
   line-height: 1;
 }
@@ -2033,6 +2086,41 @@ h1, h2, h3, h4, h5, h6 {
   .footer-bottom {
     flex-direction: column;
     text-align: center;
+  }
+
+  /* PWA Mobile Responsive Calculator */
+  .calculator-box {
+    padding: 24px 20px;
+    border-radius: var(--radius-lg);
+    margin-top: 24px;
+  }
+  
+  .calc-grid {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+
+  .milk-choice-pills {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .choice-pill {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 18px;
+    text-align: left;
+  }
+
+  .qty-stepper-wrap {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .calc-summary-card {
+    padding: 22px 20px;
+    gap: 16px;
   }
 }
 

@@ -632,38 +632,38 @@
           <div class="calc-inputs">
             <div>
               <span class="chip" style="margin-bottom: 8px;">SUBSCRIPTION ESTIMATOR</span>
-              <h2 style="font-size: 1.85rem; color: var(--color-primary); margin-bottom: 8px;">Estimate Your Daily Milk</h2>
-              <p style="color: var(--color-muted); font-size: 0.92rem;">
+              <h2 class="calc-main-title">Estimate Your Daily Milk</h2>
+              <p class="calc-main-sub">
                 Select your preferred milk type and daily requirement to instantly estimate your budget and start fresh farm delivery.
               </p>
             </div>
 
             <!-- Choose Milk Type -->
-            <div>
+            <div class="calc-step-block">
               <label class="calc-group-label">1. Choose Milk Breed / Type:</label>
               <div class="milk-choice-pills">
-                <div class="choice-pill" data-product="a1">
+                <div class="choice-pill" data-product="a1" role="button" tabindex="0">
                   <span class="name">A1 Cow Milk</span>
-                  <span class="rate">HF Breed • ₹65/L</span>
+                  <span class="rate">HF Breed • <strong class="price-a1-val">₹65</strong>/L</span>
                 </div>
-                <div class="choice-pill active" data-product="a2">
+                <div class="choice-pill active" data-product="a2" role="button" tabindex="0">
                   <span class="name">A2 Gir Cow Milk</span>
-                  <span class="rate">Gir Breed • ₹120/L</span>
+                  <span class="rate">Gir Breed • <strong class="price-a2-val">₹120</strong>/L</span>
                 </div>
-                <div class="choice-pill" data-product="buffalo">
+                <div class="choice-pill" data-product="buffalo" role="button" tabindex="0">
                   <span class="name">Buffalo Milk</span>
-                  <span class="rate">Murrah • ₹120/L</span>
+                  <span class="rate">Murrah • <strong class="price-buffalo-val">₹120</strong>/L</span>
                 </div>
               </div>
             </div>
 
             <!-- Daily Quantity Stepper -->
-            <div>
+            <div class="calc-step-block">
               <label class="calc-group-label">2. Daily Quantity (Litres):</label>
               <div class="qty-stepper-wrap">
-                <button type="button" class="stepper-btn" id="stepperMinus" aria-label="Decrease litres">−</button>
+                <button type="button" class="stepper-btn" id="stepperMinus" aria-label="Decrease daily litres">−</button>
                 <div class="qty-display" id="qtyDisplay">2 L / day</div>
-                <button type="button" class="stepper-btn" id="stepperPlus" aria-label="Increase litres">+</button>
+                <button type="button" class="stepper-btn" id="stepperPlus" aria-label="Increase daily litres">+</button>
               </div>
             </div>
           </div>
