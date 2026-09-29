@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -11,12 +11,87 @@
     .admin-body {
       background-color: var(--color-surface-soft);
       min-height: 100vh;
-      padding-bottom: 60px;
+      font-family: var(--font-sans);
+      color: var(--color-on-surface);
     }
+    
+    /* Login Screen */
+    .admin-login-wrapper {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      background: radial-gradient(circle at 50% 20%, #f4f8ee 0%, #e2e8db 100%);
+    }
+    .admin-login-card {
+      background: #ffffff;
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-xl);
+      padding: 40px 36px;
+      width: 100%;
+      max-width: 440px;
+      box-shadow: 0 20px 50px rgba(10, 29, 8, 0.12);
+      text-align: center;
+    }
+    .admin-login-logo {
+      width: 68px;
+      height: 68px;
+      border-radius: 50%;
+      border: 3px solid var(--color-primary);
+      margin: 0 auto 16px;
+      display: block;
+    }
+    .admin-login-title {
+      font-size: 1.45rem;
+      font-weight: 700;
+      color: var(--color-primary);
+      margin-bottom: 6px;
+    }
+    .admin-login-sub {
+      font-size: 0.88rem;
+      color: var(--color-muted);
+      margin-bottom: 28px;
+    }
+    .admin-login-form {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      text-align: left;
+    }
+    .login-error-alert {
+      background: #fef3f2;
+      border: 1px solid #fecdca;
+      color: #b42318;
+      padding: 10px 14px;
+      border-radius: var(--radius-sm);
+      font-size: 0.85rem;
+      display: none;
+      align-items: center;
+      gap: 8px;
+      font-weight: 600;
+    }
+    .password-input-wrap {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+    .password-toggle-btn {
+      position: absolute;
+      right: 12px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--color-muted);
+      font-size: 0.9rem;
+      padding: 4px;
+    }
+
+    /* Dashboard Header */
     .admin-header {
       background: var(--color-primary);
       color: #fff;
-      padding: 20px 0;
+      padding: 18px 0;
       box-shadow: 0 4px 16px rgba(0,0,0,0.12);
       margin-bottom: 32px;
     }
@@ -32,6 +107,8 @@
       align-items: center;
       gap: 14px;
     }
+    
+    /* Dashboard Cards */
     .admin-card {
       background: #ffffff;
       border: 1px solid var(--color-border);
@@ -47,6 +124,7 @@
       margin-bottom: 20px;
       display: flex;
       align-items: center;
+      justify-content: space-between;
       gap: 10px;
       padding-bottom: 12px;
       border-bottom: 2px solid var(--color-border-light);
@@ -66,15 +144,19 @@
       font-weight: 600;
       color: var(--color-on-surface);
     }
-    .admin-field-group input, .admin-field-group textarea, .admin-field-group select {
+    .admin-field-group input, 
+    .admin-field-group textarea, 
+    .admin-field-group select {
       background: #fafcf7;
       border: 1px solid var(--color-border);
       padding: 12px 16px;
       border-radius: var(--radius-sm);
       font-size: 0.95rem;
+      font-family: inherit;
       transition: border-color 0.2s ease, box-shadow 0.2s ease;
     }
-    .admin-field-group input:focus, .admin-field-group textarea:focus {
+    .admin-field-group input:focus, 
+    .admin-field-group textarea:focus {
       border-color: var(--color-primary);
       box-shadow: 0 0 0 3px rgba(32, 59, 20, 0.1);
       background: #fff;
@@ -101,6 +183,141 @@
       font-size: 0.8rem;
       color: var(--color-muted);
     }
+
+    /* Ghee Products Admin Cards List */
+    .ghee-admin-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 20px;
+      margin-top: 16px;
+    }
+    .ghee-admin-card {
+      background: var(--color-surface-soft);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-md);
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 14px;
+      position: relative;
+    }
+    .ghee-admin-card.is-hidden {
+      opacity: 0.6;
+      border-style: dashed;
+    }
+    .ghee-admin-card-top {
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+    }
+    .ghee-admin-thumb {
+      width: 72px;
+      height: 72px;
+      border-radius: var(--radius-sm);
+      object-fit: cover;
+      border: 1px solid var(--color-border);
+      flex-shrink: 0;
+    }
+    .ghee-admin-info {
+      flex: 1;
+      min-width: 0;
+    }
+    .ghee-admin-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--color-primary);
+      margin-bottom: 4px;
+    }
+    .ghee-admin-price {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--color-accent-green);
+    }
+    .badge-status {
+      display: inline-block;
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: var(--radius-full);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .badge-active {
+      background: #e6f4ea;
+      color: #137333;
+    }
+    .badge-hidden {
+      background: #f1f3f4;
+      color: #5f6368;
+    }
+    .ghee-admin-actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      border-top: 1px solid var(--color-border);
+      padding-top: 12px;
+    }
+    .btn-admin-action {
+      padding: 6px 12px;
+      border-radius: var(--radius-sm);
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      border: 1px solid var(--color-border);
+      background: #fff;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      transition: all 0.15s ease;
+    }
+    .btn-admin-action:hover {
+      background: var(--color-primary);
+      color: #fff;
+      border-color: var(--color-primary);
+    }
+    .btn-admin-delete:hover {
+      background: #b42318 !important;
+      color: #fff !important;
+      border-color: #b42318 !important;
+    }
+
+    /* Modal for Add / Edit Ghee */
+    .admin-modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(10, 29, 8, 0.65);
+      backdrop-filter: blur(6px);
+      z-index: 9999;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .admin-modal-overlay.open {
+      display: flex;
+    }
+    .admin-modal-card {
+      background: #ffffff;
+      border-radius: var(--radius-xl);
+      padding: 32px;
+      width: 100%;
+      max-width: 600px;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+    }
+    .admin-modal-title {
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: var(--color-primary);
+      margin-bottom: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    /* Sticky Save Actions Bar */
     .admin-actions-bar {
       position: sticky;
       bottom: 20px;
@@ -116,184 +333,313 @@
       box-shadow: 0 10px 30px rgba(0,0,0,0.25);
       color: #fff;
       margin-top: 32px;
+      flex-wrap: wrap;
     }
   </style>
 </head>
 <body class="admin-body">
 
-  <!-- Admin Header -->
-  <header class="admin-header">
-    <div class="container">
-      <div class="admin-title-wrap">
-        <img src="assets/pushkala_logo.jpg" id="adminHeaderLogo" alt="Logo" style="width: 46px; height: 46px; border-radius: 50%;">
-        <div>
-          <h1 style="font-size: 1.35rem; color: #fff; margin: 0;">Pushkala Organic Dairy Farm</h1>
-          <span style="font-size: 0.82rem; opacity: 0.85;">Control Panel &amp; Live Site Content Manager</span>
-        </div>
+  <!-- ======================================================================
+       1. SECURE ADMIN LOGIN SCREEN (Shown if not authenticated)
+       ====================================================================== -->
+  <div id="adminLoginView" class="admin-login-wrapper">
+    <div class="admin-login-card">
+      <img src="assets/pushkala_logo.jpg" alt="Pushkala Logo" class="admin-login-logo">
+      <h1 class="admin-login-title">Admin Management Portal</h1>
+      <p class="admin-login-sub">Enter credentials to manage live pricing, Ghee products, images and phone numbers.</p>
+
+      <div id="loginErrorAlert" class="login-error-alert">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
+        <span id="loginErrorText">Invalid User ID or Password.</span>
       </div>
-      <div style="display: flex; gap: 12px; align-items: center;">
-        <a href="index.html" class="btn btn-secondary btn-sm" style="background: rgba(255,255,255,0.15); color: #fff; border-color: rgba(255,255,255,0.3);">
+
+      <form id="adminLoginForm" class="admin-login-form" style="margin-top: 16px;">
+        <div class="admin-field-group">
+          <label for="adminUsername">User ID</label>
+          <input type="text" id="adminUsername" placeholder="Enter user ID" required autocomplete="username">
+        </div>
+
+        <div class="admin-field-group">
+          <label for="adminPassword">Password</label>
+          <div class="password-input-wrap">
+            <input type="password" id="adminPassword" placeholder="Enter password" required autocomplete="current-password" style="width: 100%;">
+            <button type="button" id="btnTogglePassword" class="password-toggle-btn" aria-label="Toggle password visibility">👁️</button>
+          </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-block" style="margin-top: 8px; padding: 14px; font-weight: 700;">
+          🔐 Login to Dashboard
+        </button>
+      </form>
+
+      <div style="margin-top: 24px; font-size: 0.84rem;">
+        <a href="index.html" style="color: var(--color-primary); font-weight: 600; text-decoration: none;">
           ⬅ Back to Public Website
         </a>
       </div>
     </div>
-  </header>
+  </div>
 
-  <div class="container">
+  <!-- ======================================================================
+       2. ADMIN DASHBOARD VIEW (Shown when authenticated)
+       ====================================================================== -->
+  <div id="adminDashboardView" style="display: none; padding-bottom: 60px;">
 
-    <!-- 1. Contact & Phone Numbers Settings -->
-    <div class="admin-card">
-      <h2 class="admin-card-title">
-        📞 Contact Information &amp; Phone Numbers
-      </h2>
-      <div class="admin-form-grid">
-        <div class="admin-field-group">
-          <label for="admPrimaryPhone">Primary WhatsApp &amp; Call Phone</label>
-          <input type="text" id="admPrimaryPhone" placeholder="7204736665">
-          <span style="font-size: 0.75rem; color: var(--color-muted);">Main number for WhatsApp orders &amp; calls</span>
+    <!-- Admin Header -->
+    <header class="admin-header">
+      <div class="container">
+        <div class="admin-title-wrap">
+          <img src="assets/pushkala_logo.jpg" id="adminHeaderLogo" alt="Logo" style="width: 46px; height: 46px; border-radius: 50%;">
+          <div>
+            <h1 style="font-size: 1.35rem; color: #fff; margin: 0;">Pushkala Organic Dairy Farm</h1>
+            <span style="font-size: 0.82rem; opacity: 0.85;">Control Panel &amp; Live Site Content Manager</span>
+          </div>
         </div>
-
-        <div class="admin-field-group">
-          <label for="admSecondaryPhone">Secondary Phone Number</label>
-          <input type="text" id="admSecondaryPhone" placeholder="7204726665">
-        </div>
-
-        <div class="admin-field-group">
-          <label for="admFssaiNo">FSSAI License Number</label>
-          <input type="text" id="admFssaiNo" placeholder="21226007000022">
-        </div>
-
-        <div class="admin-field-group" style="grid-column: 1 / -1;">
-          <label for="admAddress">Farm Address</label>
-          <input type="text" id="admAddress" placeholder="World School, Hulimangala, Jigani Hobli, Bangalore – 560105">
+        <div style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
+          <span style="font-size: 0.82rem; background: rgba(255,255,255,0.18); padding: 4px 12px; border-radius: 999px; color: #fff;">
+            👤 Admin Active
+          </span>
+          <button type="button" id="btnLogout" class="btn btn-sm" style="background: rgba(255,255,255,0.15); color: #fff; border: 1px solid rgba(255,255,255,0.3);">
+            🚪 Logout
+          </button>
+          <a href="index.html" target="_blank" class="btn btn-whatsapp btn-sm">
+            🌐 View Public Website ↗
+          </a>
         </div>
       </div>
+    </header>
+
+    <div class="container">
+
+      <!-- 1. Contact & Phone Numbers Settings -->
+      <div class="admin-card">
+        <h2 class="admin-card-title">
+          <span>📞 Contact Information &amp; Phone Numbers</span>
+        </h2>
+        <div class="admin-form-grid">
+          <div class="admin-field-group">
+            <label for="admPrimaryPhone">Primary WhatsApp &amp; Call Phone</label>
+            <input type="text" id="admPrimaryPhone" placeholder="7204736665">
+            <span style="font-size: 0.75rem; color: var(--color-muted);">Main number for WhatsApp orders &amp; call buttons</span>
+          </div>
+
+          <div class="admin-field-group">
+            <label for="admSecondaryPhone">Secondary Phone Number</label>
+            <input type="text" id="admSecondaryPhone" placeholder="7204726665">
+            <span style="font-size: 0.75rem; color: var(--color-muted);">Alternative contact number in header/footer</span>
+          </div>
+
+          <div class="admin-field-group">
+            <label for="admFssaiNo">FSSAI License Number</label>
+            <input type="text" id="admFssaiNo" placeholder="21226007000022">
+          </div>
+
+          <div class="admin-field-group" style="grid-column: 1 / -1;">
+            <label for="admAddress">Farm Address</label>
+            <input type="text" id="admAddress" placeholder="World School, Hulimangala, Jigani Hobli, Bangalore – 560105">
+          </div>
+        </div>
+      </div>
+
+      <!-- 2. Milk & Fresh Paneer Rates -->
+      <div class="admin-card">
+        <h2 class="admin-card-title">
+          <span>💰 Milk &amp; Fresh Paneer Pricing (₹)</span>
+        </h2>
+        <div class="admin-form-grid">
+          <div class="admin-field-group">
+            <label for="admPriceA1">A1 Cow Milk (HF Breed) — Rate / Litre (₹)</label>
+            <input type="number" id="admPriceA1" placeholder="65">
+          </div>
+
+          <div class="admin-field-group">
+            <label for="admPriceA2">A2 Cow Milk (Gir Breed) — Rate / Litre (₹)</label>
+            <input type="number" id="admPriceA2" placeholder="120">
+          </div>
+
+          <div class="admin-field-group">
+            <label for="admPriceBuffalo">Buffalo Milk (Murrah Breed) — Rate / Litre (₹)</label>
+            <input type="number" id="admPriceBuffalo" placeholder="120">
+          </div>
+
+          <div class="admin-field-group">
+            <label for="admPricePaneer">Fresh Farm Paneer — Rate (₹ / 250g)</label>
+            <input type="number" id="admPricePaneer" placeholder="120">
+          </div>
+        </div>
+      </div>
+
+      <!-- 3. GHEE PRODUCTS CATEGORY MANAGEMENT -->
+      <div class="admin-card" id="gheeManagementCard">
+        <div class="admin-card-title">
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <span>🏺 Pure Farm Ghee Products Category</span>
+          </div>
+          <button type="button" id="btnOpenAddGhee" class="btn btn-primary btn-sm" style="font-size: 0.84rem; padding: 6px 14px;">
+            ➕ Add New Ghee Product
+          </button>
+        </div>
+        <p style="font-size: 0.88rem; color: var(--color-muted); margin-bottom: 16px;">
+          Manage the 3 core Ghee products (<strong>A1 Ghee</strong>, <strong>A2 Desi Ghee</strong>, <strong>Buffalo Ghee</strong>) or add new custom Ghee variations. Update pricing, descriptions, images, and visibility.
+        </p>
+
+        <!-- Dynamic Ghee Products Grid in Admin -->
+        <div class="ghee-admin-grid" id="adminGheeList">
+          <!-- Dynamically populated via admin.js -->
+        </div>
+      </div>
+
+      <!-- 4. Image Manager -->
+      <div class="admin-card">
+        <h2 class="admin-card-title">
+          <span>🖼️ Breed &amp; Farm Image Manager</span>
+        </h2>
+        <p style="font-size: 0.86rem; color: var(--color-muted); margin-bottom: 20px;">
+          Upload custom photos for each milk breed, paneer, farm visit and brand logo. (Ghee product photos can be updated in the Ghee section above).
+        </p>
+
+        <div class="admin-form-grid">
+          <!-- A1 Cow Image -->
+          <div class="admin-field-group">
+            <label>A1 Cow Milk (HF Breed) Photo</label>
+            <input type="file" id="fileA1" accept="image/*">
+            <div class="img-preview-box">
+              <img id="prevA1" src="assets/hf_cow_a1.jpg" alt="A1 Cow">
+            </div>
+          </div>
+
+          <!-- A2 Cow Image -->
+          <div class="admin-field-group">
+            <label>A2 Cow Milk (Gir Breed) Photo</label>
+            <input type="file" id="fileA2" accept="image/*">
+            <div class="img-preview-box">
+              <img id="prevA2" src="assets/gir_cow_a2.jpg" alt="A2 Cow">
+            </div>
+          </div>
+
+          <!-- Buffalo Image -->
+          <div class="admin-field-group">
+            <label>Murrah Buffalo Milk Photo</label>
+            <input type="file" id="fileBuffalo" accept="image/*">
+            <div class="img-preview-box">
+              <img id="prevBuffalo" src="assets/murrah_buffalo.jpg" alt="Buffalo">
+            </div>
+          </div>
+
+          <!-- Fresh Paneer Image -->
+          <div class="admin-field-group">
+            <label>Fresh Farm Paneer Photo</label>
+            <input type="file" id="filePaneer" accept="image/*">
+            <div class="img-preview-box">
+              <img id="prevPaneer" src="assets/fresh_paneer.jpg" alt="Paneer">
+            </div>
+          </div>
+
+          <!-- Farm Visit Image -->
+          <div class="admin-field-group">
+            <label>Visit Our Farm Photo</label>
+            <input type="file" id="fileVisit" accept="image/*">
+            <div class="img-preview-box">
+              <img id="prevVisit" src="assets/farm_visit.jpg" alt="Farm Visit">
+            </div>
+          </div>
+
+          <!-- Brand Logo Image -->
+          <div class="admin-field-group">
+            <label>Pushkala Brand Logo Image</label>
+            <input type="file" id="fileLogo" accept="image/*">
+            <div class="img-preview-box">
+              <img id="prevLogo" src="assets/pushkala_logo.jpg" alt="Brand Logo">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sticky Save Actions Bar -->
+      <div class="admin-actions-bar">
+        <div>
+          <strong>Save Changes</strong>
+          <div style="font-size: 0.78rem; opacity: 0.85;">All changes apply live to your website immediately.</div>
+        </div>
+        <div style="display: flex; gap: 12px; align-items: center;">
+          <button type="button" id="btnResetDefaults" class="btn btn-secondary btn-sm" style="background: rgba(255,255,255,0.1); color: #fff; border-color: rgba(255,255,255,0.25);">
+            Reset Defaults
+          </button>
+          <button type="button" id="btnSaveAdmin" class="btn btn-whatsapp">
+            💾 Save All Changes
+          </button>
+        </div>
+      </div>
+
     </div>
+  </div>
 
-    <!-- 2. Product Prices & Rates -->
-    <div class="admin-card">
-      <h2 class="admin-card-title">
-        💰 Product Rates &amp; Pricing (₹)
-      </h2>
-      <div class="admin-form-grid">
-        <div class="admin-field-group">
-          <label for="admPriceA1">A1 Cow Milk (HF Breed) — Rate / Litre (₹)</label>
-          <input type="number" id="admPriceA1" placeholder="65">
-        </div>
-
-        <div class="admin-field-group">
-          <label for="admPriceA2">A2 Cow Milk (Gir Breed) — Rate / Litre (₹)</label>
-          <input type="number" id="admPriceA2" placeholder="120">
-        </div>
-
-        <div class="admin-field-group">
-          <label for="admPriceBuffalo">Buffalo Milk (Murrah Breed) — Rate / Litre (₹)</label>
-          <input type="number" id="admPriceBuffalo" placeholder="120">
-        </div>
-
-        <div class="admin-field-group">
-          <label for="admPricePaneer">Fresh Farm Paneer — Rate (₹ / 250g)</label>
-          <input type="number" id="admPricePaneer" placeholder="120">
-        </div>
-
-        <div class="admin-field-group">
-          <label for="admPriceGhee">Pure Desi Ghee — Rate (₹ / 500ml)</label>
-          <input type="number" id="admPriceGhee" placeholder="750">
-        </div>
+  <!-- ======================================================================
+       3. MODAL FOR ADDING / EDITING GHEE PRODUCTS
+       ====================================================================== -->
+  <div id="gheeModal" class="admin-modal-overlay">
+    <div class="admin-modal-card">
+      <div class="admin-modal-title">
+        <span id="gheeModalHeaderTitle">Add Ghee Product</span>
+        <button type="button" id="btnCloseGheeModal" style="background: none; border: none; font-size: 1.4rem; cursor: pointer;">✕</button>
       </div>
+
+      <form id="gheeProductForm">
+        <input type="hidden" id="gheeEditId">
+
+        <div class="admin-form-grid" style="grid-template-columns: 1fr 1fr; gap: 16px;">
+          <div class="admin-field-group">
+            <label for="gheeName">Product Name *</label>
+            <input type="text" id="gheeName" placeholder="e.g. A1 Ghee, A2 Desi Ghee" required>
+          </div>
+
+          <div class="admin-field-group">
+            <label for="gheeBadge">Badge / Sub-tag</label>
+            <input type="text" id="gheeBadge" placeholder="e.g. HF COW MILK, GIR COW BILONA">
+          </div>
+
+          <div class="admin-field-group">
+            <label for="gheePrice">Price (₹) *</label>
+            <input type="number" id="gheePrice" placeholder="e.g. 650" required min="1">
+          </div>
+
+          <div class="admin-field-group">
+            <label for="gheeUnit">Unit / Quantity *</label>
+            <input type="text" id="gheeUnit" placeholder="e.g. per 500ml, per 1 Litre" required>
+          </div>
+        </div>
+
+        <div class="admin-field-group" style="margin-top: 14px;">
+          <label for="gheeDescription">Product Description *</label>
+          <textarea id="gheeDescription" rows="3" placeholder="Detailed description of ghee aroma, preparation, and benefits..." required></textarea>
+        </div>
+
+        <div class="admin-field-group" style="margin-top: 14px;">
+          <label for="gheePoints">Key Highlights / Quality Points (one per line)</label>
+          <textarea id="gheePoints" rows="3" placeholder="100% Pure Milk&#10;Traditional slow-clarified process&#10;Granular texture"></textarea>
+        </div>
+
+        <div class="admin-field-group" style="margin-top: 14px;">
+          <label>Product Image</label>
+          <input type="file" id="gheeImageFile" accept="image/*">
+          <div class="img-preview-box" style="height: 120px;">
+            <img id="gheeImagePreview" src="assets/pure_ghee.jpg" alt="Ghee Preview">
+          </div>
+        </div>
+
+        <div style="margin-top: 16px; display: flex; align-items: center; gap: 8px;">
+          <input type="checkbox" id="gheeVisible" checked style="width: 18px; height: 18px; accent-color: var(--color-primary);">
+          <label for="gheeVisible" style="font-size: 0.9rem; font-weight: 600; cursor: pointer;">
+            Show on website (Visible in Ghee Collection)
+          </label>
+        </div>
+
+        <div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 24px;">
+          <button type="button" id="btnCancelGheeModal" class="btn btn-secondary btn-sm">Cancel</button>
+          <button type="submit" class="btn btn-primary btn-sm">💾 Save Ghee Product</button>
+        </div>
+      </form>
     </div>
-
-    <!-- 3. Image Manager -->
-    <div class="admin-card">
-      <h2 class="admin-card-title">
-        🖼️ Product &amp; Breed Image Manager
-      </h2>
-      <p style="font-size: 0.86rem; color: var(--color-muted); margin-bottom: 20px;">
-        Upload custom photos for each milk breed and product. Recommended format: JPG/PNG under 1MB.
-      </p>
-
-      <div class="admin-form-grid">
-        <!-- A1 Cow Image -->
-        <div class="admin-field-group">
-          <label>A1 Cow Milk (HF Breed) Photo</label>
-          <input type="file" id="fileA1" accept="image/*">
-          <div class="img-preview-box">
-            <img id="prevA1" src="assets/hf_cow_a1.jpg" alt="A1 Cow">
-          </div>
-        </div>
-
-        <!-- A2 Cow Image -->
-        <div class="admin-field-group">
-          <label>A2 Cow Milk (Gir Breed) Photo</label>
-          <input type="file" id="fileA2" accept="image/*">
-          <div class="img-preview-box">
-            <img id="prevA2" src="assets/gir_cow_a2.jpg" alt="A2 Cow">
-          </div>
-        </div>
-
-        <!-- Buffalo Image -->
-        <div class="admin-field-group">
-          <label>Murrah Buffalo Milk Photo</label>
-          <input type="file" id="fileBuffalo" accept="image/*">
-          <div class="img-preview-box">
-            <img id="prevBuffalo" src="assets/murrah_buffalo.jpg" alt="Buffalo">
-          </div>
-        </div>
-
-        <!-- Fresh Paneer Image -->
-        <div class="admin-field-group">
-          <label>Fresh Farm Paneer Photo</label>
-          <input type="file" id="filePaneer" accept="image/*">
-          <div class="img-preview-box">
-            <img id="prevPaneer" src="assets/fresh_paneer.jpg" alt="Paneer">
-          </div>
-        </div>
-
-        <!-- Pure Ghee Image -->
-        <div class="admin-field-group">
-          <label>Pure Desi Ghee Photo</label>
-          <input type="file" id="fileGhee" accept="image/*">
-          <div class="img-preview-box">
-            <img id="prevGhee" src="assets/pure_ghee.jpg" alt="Ghee">
-          </div>
-        </div>
-
-        <!-- Farm Visit Image -->
-        <div class="admin-field-group">
-          <label>Visit Our Farm Photo</label>
-          <input type="file" id="fileVisit" accept="image/*">
-          <div class="img-preview-box">
-            <img id="prevVisit" src="assets/farm_visit.jpg" alt="Farm Visit">
-          </div>
-        </div>
-
-        <!-- Brand Logo Image -->
-        <div class="admin-field-group">
-          <label>Pushkala Brand Logo Image</label>
-          <input type="file" id="fileLogo" accept="image/*">
-          <div class="img-preview-box">
-            <img id="prevLogo" src="assets/pushkala_logo.jpg" alt="Brand Logo">
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Sticky Save Actions Bar -->
-    <div class="admin-actions-bar">
-      <div>
-        <strong>Save Changes</strong>
-        <div style="font-size: 0.78rem; opacity: 0.85;">All changes apply live to your website immediately.</div>
-      </div>
-      <div style="display: flex; gap: 12px;">
-        <button type="button" id="btnResetDefaults" class="btn btn-secondary btn-sm" style="background: rgba(255,255,255,0.1); color: #fff; border-color: rgba(255,255,255,0.25);">
-          Reset Defaults
-        </button>
-        <button type="button" id="btnSaveAdmin" class="btn btn-whatsapp">
-          💾 Save All Changes
-        </button>
-      </div>
-    </div>
-
   </div>
 
   <script src="js/admin.js"></script>

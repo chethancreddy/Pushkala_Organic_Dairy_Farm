@@ -4,7 +4,7 @@
  * Version: 1.0.0
  */
 
-const CACHE_NAME = 'pushkala-dairy-v3';
+const CACHE_NAME = 'pushkala-dairy-v4';
 const OFFLINE_URL = './index.html';
 
 // Assets to pre-cache on install

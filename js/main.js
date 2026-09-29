@@ -18,6 +18,42 @@ document.addEventListener('DOMContentLoaded', () => {
   let TEL_PRIMARY = adminSettings?.primaryPhone || '7204736665';
   let TEL_SECONDARY = adminSettings?.secondaryPhone || '7204726665';
 
+  const DEFAULT_GHEE_PRODUCTS = [
+    {
+      id: 'ghee_a1',
+      name: 'A1 Ghee',
+      badge: 'HF COW MILK',
+      price: 650,
+      unit: 'per 500ml',
+      description: 'Pure wholesome ghee prepared from 100% pure HF Cow milk. Golden texture, mild aroma, and nutrient-rich everyday cooking companion.',
+      image: 'assets/pure_ghee.jpg',
+      points: ['100% Pure HF Cow Milk', 'Nutritious & smooth texture', 'Slow-clarified traditional process'],
+      visible: true
+    },
+    {
+      id: 'ghee_a2',
+      name: 'A2 Desi Ghee',
+      badge: 'GIR COW BILONA',
+      price: 950,
+      unit: 'per 500ml',
+      description: 'Handcrafted from pure Gir Cow A2 milk following traditional Vedic Bilona method. Incomparable aroma, rich golden grains, and superior digestive wellness.',
+      image: 'assets/pure_ghee.jpg',
+      points: ['100% Pure Gir Cow A2 Milk', 'Traditional Vedic Bilona Churned', 'Granular texture & rich aroma'],
+      visible: true
+    },
+    {
+      id: 'ghee_buffalo',
+      name: 'Buffalo Ghee',
+      badge: 'MURRAH BUFFALO',
+      price: 750,
+      unit: 'per 500ml',
+      description: 'Rich, full-bodied pure ghee prepared from high-fat Murrah buffalo milk. Dense granularity, heavenly nutty aroma, exceptional for festive sweets and hearty dishes.',
+      image: 'assets/pure_ghee.jpg',
+      points: ['100% Pure Murrah Buffalo Milk', 'Dense white-gold graininess', 'Ideal for sweets & authentic cooking'],
+      visible: true
+    }
+  ];
+
   const PRODUCTS = {
     a1: {
       id: 'a1',
@@ -52,13 +88,6 @@ document.addEventListener('DOMContentLoaded', () => {
       type: 'Dairy Product',
       price: adminSettings?.prices?.paneer || 120,
       unit: '250g'
-    },
-    ghee: {
-      id: 'ghee',
-      name: 'Pure Desi Ghee',
-      type: 'Dairy Product',
-      price: adminSettings?.prices?.ghee || 750,
-      unit: '500ml'
     }
   };
 
@@ -70,12 +99,11 @@ document.addEventListener('DOMContentLoaded', () => {
   function applyDynamicAdminSettings() {
     if (!adminSettings) return;
 
-    // 1. Update Prices
+    // 1. Update Milk & Paneer Prices
     document.querySelectorAll('.price-a1-val').forEach(el => el.textContent = `₹${PRODUCTS.a1.price}`);
     document.querySelectorAll('.price-a2-val').forEach(el => el.textContent = `₹${PRODUCTS.a2.price}`);
     document.querySelectorAll('.price-buffalo-val').forEach(el => el.textContent = `₹${PRODUCTS.buffalo.price}`);
     document.querySelectorAll('.price-paneer-val').forEach(el => el.textContent = `₹${PRODUCTS.paneer.price}`);
-    document.querySelectorAll('.price-ghee-val').forEach(el => el.textContent = `₹${PRODUCTS.ghee.price}`);
 
     // 2. Update Phone Numbers & Hrefs
     document.querySelectorAll('.dynamic-phone-primary').forEach(el => el.textContent = TEL_PRIMARY);
@@ -88,9 +116,69 @@ document.addEventListener('DOMContentLoaded', () => {
     if (imgs.a2) document.querySelectorAll('img[src*="gir_cow_a2"]').forEach(img => img.src = imgs.a2);
     if (imgs.buffalo) document.querySelectorAll('img[src*="murrah_buffalo"]').forEach(img => img.src = imgs.buffalo);
     if (imgs.paneer) document.querySelectorAll('img[src*="fresh_paneer"]').forEach(img => img.src = imgs.paneer);
-    if (imgs.ghee) document.querySelectorAll('img[src*="pure_ghee"]').forEach(img => img.src = imgs.ghee);
     if (imgs.visit) document.querySelectorAll('img[src*="farm_visit"]').forEach(img => img.src = imgs.visit);
     if (imgs.logo) document.querySelectorAll('img[src*="pushkala_logo"]').forEach(img => img.src = imgs.logo);
+
+    // 4. Render / Sync Ghee Products
+    const gheeList = adminSettings.gheeProducts || DEFAULT_GHEE_PRODUCTS;
+    const gheeContainer = document.getElementById('gheeProductsGrid');
+    if (gheeContainer && Array.isArray(gheeList)) {
+      const visibleGhee = gheeList.filter(p => p.visible !== false);
+      if (visibleGhee.length > 0) {
+        gheeContainer.innerHTML = visibleGhee.map(item => {
+          const itemImg = item.image || 'assets/pure_ghee.jpg';
+          const itemBadge = item.badge || 'PURE GHEE';
+          const pointsHtml = (item.points || []).map(pt => `
+            <div class="ghee-point-item">
+              <svg class="icon-svg" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+              <span>${escapeHtml(pt)}</span>
+            </div>
+          `).join('');
+
+          const waText = encodeURIComponent(`Hello Pushkala Organic Dairy Farm, I would like to order ${item.name} (${item.unit}) at ₹${item.price}. Please provide delivery details.`);
+          const waUrl = `https://wa.me/${WA_PHONE}?text=${waText}`;
+
+          return `
+            <div class="ghee-product-card" data-ghee-id="${item.id}">
+              <div class="ghee-card-img-wrap">
+                <img src="${itemImg}" alt="${escapeHtml(item.name)}" loading="lazy">
+                <span class="ghee-card-badge">${escapeHtml(itemBadge)}</span>
+              </div>
+              <div class="ghee-card-body">
+                <div>
+                  <h4 class="ghee-card-title">${escapeHtml(item.name)}</h4>
+                  <div class="ghee-card-price-wrap">
+                    <span class="ghee-card-price">₹${item.price}</span>
+                    <span class="ghee-card-unit">${escapeHtml(item.unit || 'per 500ml')}</span>
+                  </div>
+                  <p class="ghee-card-desc">${escapeHtml(item.description || '')}</p>
+                  <div class="ghee-points">
+                    ${pointsHtml}
+                  </div>
+                </div>
+                <a href="${waUrl}" target="_blank" rel="noopener" class="btn btn-whatsapp btn-block ghee-wa-btn">
+                  <svg class="icon-svg" viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.77-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.312.045-.694.067-2.18-.553-1.898-.79-3.123-2.73-3.218-2.855-.095-.125-.769-1.025-.769-1.954 0-.93.487-1.385.66-1.574.174-.189.38-.236.507-.236.126 0 .253.001.364.007.118.006.275-.044.43.328.16.386.549 1.34.597 1.436.048.096.08.209.016.336s-.096.223-.19.336c-.095.112-.2.25-.285.336-.096.096-.195.2-.084.391.111.191.494.814 1.06 1.317.728.647 1.342.847 1.533.942.19.096.301.08.412-.048.111-.127.476-.554.603-.744.127-.19.254-.158.428-.095.174.063 1.11.523 1.3.618.19.095.317.143.364.222.048.08.048.461-.096.866z"/></svg>
+                  Enquire on WhatsApp
+                </a>
+              </div>
+            </div>
+          `;
+        }).join('');
+      } else {
+        gheeContainer.innerHTML = `<p style="grid-column: 1 / -1; text-align: center; color: var(--color-muted); padding: 24px;">Ghee products currently undergoing fresh batch preparation. Please contact us on WhatsApp for orders.</p>`;
+      }
+    }
+  }
+
+  function escapeHtml(str) {
+    if (!str) return '';
+    return String(str).replace(/[&<>"']/g, m => ({
+      '&': '&amp;',
+      '<': '&lt;',
+      '>': '&gt;',
+      '"': '&quot;',
+      "'": '&#39;'
+    })[m]);
   }
 
   applyDynamicAdminSettings();
