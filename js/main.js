@@ -108,7 +108,21 @@ document.addEventListener('DOMContentLoaded', () => {
     // 2. Update Phone Numbers & Hrefs
     document.querySelectorAll('.dynamic-phone-primary').forEach(el => el.textContent = TEL_PRIMARY);
     document.querySelectorAll('.dynamic-phone-secondary').forEach(el => el.textContent = TEL_SECONDARY);
-    document.querySelectorAll('a[href^="tel:"]').forEach(a => a.href = `tel:${TEL_PRIMARY}`);
+    
+    document.querySelectorAll('a[href^="tel:"]').forEach(a => {
+      if (a.classList.contains('dynamic-phone-secondary')) {
+        a.href = `tel:${TEL_SECONDARY}`;
+      } else {
+        a.href = `tel:${TEL_PRIMARY}`;
+      }
+    });
+
+    document.querySelectorAll('a[href^="https://wa.me/"]').forEach(a => {
+      try {
+        const url = new URL(a.href);
+        a.href = `https://wa.me/${WA_PHONE}${url.search}`;
+      } catch (e) {}
+    });
 
     // 3. Update Images
     const imgs = adminSettings.images || {};
