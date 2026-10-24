@@ -60,11 +60,31 @@ function getConnectionString(req) {
   ).trim();
 }
 
+let neonDriver = null;
+try {
+  neonDriver = require('@neondatabase/serverless').neon;
+} catch (e) {}
+
 async function executeNeonSql(connString, query, params = []) {
   if (!connString) {
     throw new Error('Neon connection string not provided');
   }
 
+  // 1. Prefer official @neondatabase/serverless driver
+  if (neonDriver) {
+    try {
+      const sql = neonDriver(connString, { fullResults: true });
+      const result = await sql.query(query, params);
+      return {
+        rows: result.rows || [],
+        rowCount: result.rowCount || 0
+      };
+    } catch (driverErr) {
+      console.warn('[executeNeonSql] Driver query warning, checking HTTP fallback:', driverErr.message);
+    }
+  }
+
+  // 2. Direct HTTP fallback
   const u = new URL(connString);
   const host = u.hostname;
   const username = decodeURIComponent(u.username);

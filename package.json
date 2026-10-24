@@ -1,0 +1,12 @@
+{
+  "name": "pushkala-organic-dairy-farm",
+  "version": "1.0.0",
+  "description": "Pushkala Organic Dairy Farm - Official Website and Neon Database API",
+  "main": "index.html",
+  "scripts": {
+    "start": "npx serve ."
+  },
+  "dependencies": {
+    "@neondatabase/serverless": "^0.10.4"
+  }
+}
