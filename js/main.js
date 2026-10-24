@@ -5,18 +5,37 @@
 
 document.addEventListener('DOMContentLoaded', () => {
   // --------------------------------------------------------------------------
-  // 1. Dynamic Admin Settings Sync & State
+  // 1. Dynamic Admin Settings Sync & State (Supabase DB + Local Cache)
   // --------------------------------------------------------------------------
-  const STORAGE_KEY = 'podf_site_settings_v1';
-  let adminSettings = null;
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (raw) adminSettings = JSON.parse(raw);
-  } catch(e) {}
+  const db = window.PODF_DB;
+  let adminSettings = db ? db.getCachedSettings() : null;
+  if (!adminSettings) {
+    try {
+      const raw = localStorage.getItem('podf_site_settings_v2') || localStorage.getItem('podf_site_settings_v1');
+      if (raw) adminSettings = JSON.parse(raw);
+    } catch(e) {}
+  }
 
-  let WA_PHONE = (adminSettings?.primaryPhone) ? '91' + adminSettings.primaryPhone.replace(/\D/g, '') : '917204736665';
-  let TEL_PRIMARY = adminSettings?.primaryPhone || '7204736665';
-  let TEL_SECONDARY = adminSettings?.secondaryPhone || '7204726665';
+  function getCleanPhone(phoneStr, defaultPhone) {
+    return (phoneStr || defaultPhone || '9742216162').trim();
+  }
+
+  let TEL_PRIMARY = getCleanPhone(adminSettings?.primaryPhone, '9742216162');
+  let TEL_SECONDARY = getCleanPhone(adminSettings?.secondaryPhone, '7204726665');
+  let WA_PHONE = '91' + TEL_PRIMARY.replace(/\D/g, '');
+
+  function syncSettingsValues(settings) {
+    if (!settings) return;
+    adminSettings = settings;
+    TEL_PRIMARY = getCleanPhone(settings.primaryPhone, '9742216162');
+    TEL_SECONDARY = getCleanPhone(settings.secondaryPhone, '7204726665');
+    WA_PHONE = '91' + TEL_PRIMARY.replace(/\D/g, '');
+
+    if (PRODUCTS.a1) PRODUCTS.a1.price = settings.prices?.a1 || 65;
+    if (PRODUCTS.a2) PRODUCTS.a2.price = settings.prices?.a2 || 120;
+    if (PRODUCTS.buffalo) PRODUCTS.buffalo.price = settings.prices?.buffalo || 120;
+    if (PRODUCTS.paneer) PRODUCTS.paneer.price = settings.prices?.paneer || 120;
+  }
 
   const DEFAULT_GHEE_PRODUCTS = [
     {
@@ -105,7 +124,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('.price-buffalo-val').forEach(el => el.textContent = `₹${PRODUCTS.buffalo.price}`);
     document.querySelectorAll('.price-paneer-val').forEach(el => el.textContent = `₹${PRODUCTS.paneer.price}`);
 
-    // 2. Update Phone Numbers & Hrefs
+    // 2. Update Phone Numbers & Hrefs across ALL sections
     document.querySelectorAll('.dynamic-phone-primary').forEach(el => el.textContent = TEL_PRIMARY);
     document.querySelectorAll('.dynamic-phone-secondary').forEach(el => el.textContent = TEL_SECONDARY);
     
@@ -117,9 +136,9 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
 
-    document.querySelectorAll('a[href^="https://wa.me/"]').forEach(a => {
+    document.querySelectorAll('a[href*="wa.me"]').forEach(a => {
       try {
-        const url = new URL(a.href);
+        const url = new URL(a.href, window.location.origin);
         a.href = `https://wa.me/${WA_PHONE}${url.search}`;
       } catch (e) {}
     });
@@ -196,6 +215,33 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   applyDynamicAdminSettings();
+
+  // Background fetch from Neon database (updates all devices & incognito without login)
+  if (db && typeof db.fetchSettingsFromDatabase === 'function') {
+    db.fetchSettingsFromDatabase().then((res) => {
+      if (res && res.data) {
+        syncSettingsValues(res.data);
+        applyDynamicAdminSettings();
+        if (typeof updateCalculator === 'function') updateCalculator();
+      }
+    }).catch(err => {
+      console.warn('[Pushkala] Background settings fetch error:', err);
+    });
+  }
+
+  // Cross-tab / cross-window live sync
+  window.addEventListener('storage', (e) => {
+    if (e.key === 'podf_site_settings_v2' || e.key === 'podf_site_settings_v1') {
+      try {
+        const fresh = JSON.parse(e.newValue);
+        if (fresh) {
+          syncSettingsValues(fresh);
+          applyDynamicAdminSettings();
+          if (typeof updateCalculator === 'function') updateCalculator();
+        }
+      } catch(err) {}
+    }
+  });
 
   // --------------------------------------------------------------------------
   // 2. Sticky Header & Active Navigation Scrollspy

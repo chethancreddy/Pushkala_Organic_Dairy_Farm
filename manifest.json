@@ -1,4 +1,4 @@
-﻿{
+{
   "name": "Pushkala Organic Dairy Farm",
   "short_name": "Pushkala Dairy",
   "description": "Pure farm-fresh A1, A2 & Buffalo milk delivered to your doorstep. Hulimangala, Jigani, Bangalore.",
@@ -42,7 +42,7 @@
       "name": "Call Us",
       "short_name": "Call",
       "description": "Call Pushkala Farm directly",
-      "url": "tel:+917204736665",
+      "url": "tel:+919742216162",
       "icons": [{ "src": "assets/pwa_icon_192.jpg", "sizes": "192x192" }]
     },
     {

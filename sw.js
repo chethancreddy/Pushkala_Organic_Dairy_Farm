@@ -1,16 +1,18 @@
 /**
  * Pushkala Organic Dairy Farm — Service Worker
- * Strategy: Cache-First for static assets, Network-First for HTML navigation.
- * Version: 1.0.0
+ * Strategy: Network-First for JS and navigation, Cache-First for media assets.
+ * Version: 5.0.0
  */
 
-const CACHE_NAME = 'pushkala-dairy-v4';
+const CACHE_NAME = 'pushkala-dairy-v5';
 const OFFLINE_URL = './index.html';
 
 // Assets to pre-cache on install
 const PRECACHE_ASSETS = [
   './index.html',
   './css/style.css',
+  './js/config.js',
+  './js/db.js',
   './js/main.js',
   './manifest.json',
   './assets/pushkala_logo.jpg',
@@ -28,7 +30,7 @@ const PRECACHE_ASSETS = [
 
 // ─── Install: Pre-cache all static assets ───────────────────────────────────
 self.addEventListener('install', (event) => {
-  console.log('[SW] Installing Service Worker v1...');
+  console.log('[SW] Installing Service Worker v5...');
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
       console.log('[SW] Pre-caching assets...');
@@ -42,7 +44,7 @@ self.addEventListener('install', (event) => {
 
 // ─── Activate: Clean up old caches ──────────────────────────────────────────
 self.addEventListener('activate', (event) => {
-  console.log('[SW] Activating Service Worker...');
+  console.log('[SW] Activating Service Worker v5...');
   event.waitUntil(
     caches.keys().then((cacheNames) => {
       return Promise.all(
@@ -60,46 +62,49 @@ self.addEventListener('activate', (event) => {
   );
 });
 
-// ─── Fetch: Cache-First for assets, Network-First for navigation ─────────────
+// ─── Fetch: Network-First for HTML & JS, Cache-First for static assets ───────
 self.addEventListener('fetch', (event) => {
   const { request } = event;
   const url = new URL(request.url);
 
-  // Skip non-GET requests and cross-origin requests (WhatsApp links etc.)
+  // Skip non-GET requests and cross-origin requests (Supabase, WhatsApp, fonts, etc.)
   if (request.method !== 'GET' || url.origin !== self.location.origin) {
     return;
   }
 
-  // For HTML navigation: Network-First → fallback to cache → fallback to offline page
-  if (request.mode === 'navigate') {
+  // Network-First for HTML navigation and JS files (always fetch latest numbers & code)
+  if (request.mode === 'navigate' || url.pathname.endsWith('.js')) {
     event.respondWith(
       fetch(request)
         .then((response) => {
-          // Cache fresh copy
-          const cloned = response.clone();
-          caches.open(CACHE_NAME).then((cache) => cache.put(request, cloned));
-          return response;
-        })
-        .catch(() => {
-          return caches.match(request)
-            .then((cached) => cached || caches.match(OFFLINE_URL));
-        })
-    );
-    return;
-  }
-
-  // For all other assets: Cache-First → Network fallback
-  event.respondWith(
-    caches.match(request).then((cached) => {
-      if (cached) {
-        // Serve from cache and update in background (stale-while-revalidate)
-        const networkFetch = fetch(request).then((response) => {
           if (response && response.status === 200) {
             const cloned = response.clone();
             caches.open(CACHE_NAME).then((cache) => cache.put(request, cloned));
           }
           return response;
-        }).catch(() => { /* silent fail - already served from cache */ });
+        })
+        .catch(() => {
+          return caches.match(request).then((cached) => {
+            if (cached) return cached;
+            if (request.mode === 'navigate') return caches.match(OFFLINE_URL);
+            return null;
+          });
+        })
+    );
+    return;
+  }
+
+  // For media, fonts, images and styles: Cache-First → Network fallback
+  event.respondWith(
+    caches.match(request).then((cached) => {
+      if (cached) {
+        // Serve from cache and update in background (stale-while-revalidate)
+        fetch(request).then((response) => {
+          if (response && response.status === 200) {
+            const cloned = response.clone();
+            caches.open(CACHE_NAME).then((cache) => cache.put(request, cloned));
+          }
+        }).catch(() => { /* silent fail */ });
 
         return cached;
       }
@@ -117,7 +122,7 @@ self.addEventListener('fetch', (event) => {
   );
 });
 
-// ─── Push Notifications (future-ready stub) ──────────────────────────────────
+// ─── Push Notifications ──────────────────────────────────
 self.addEventListener('push', (event) => {
   const data = event.data ? event.data.json() : {};
   const title = data.title || 'Pushkala Organic Dairy Farm';

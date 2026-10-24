@@ -116,7 +116,7 @@ document.addEventListener('DOMContentLoaded', () => {
   ];
 
   const DEFAULT_SETTINGS = {
-    primaryPhone: '7204736665',
+    primaryPhone: '9742216162',
     secondaryPhone: '7204726665',
     fssaiNo: '21226007000022',
     address: 'World School, Hulimangala, Jigani Hobli, Bangalore – 560105',
@@ -137,10 +137,15 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   };
 
-  // Load existing settings
+  const db = window.PODF_DB;
+
+  // Load existing settings (prefer PODF_DB cache)
   function getSettings() {
+    if (db && typeof db.getCachedSettings === 'function') {
+      return db.getCachedSettings();
+    }
     try {
-      const stored = localStorage.getItem(STORAGE_KEY);
+      const stored = localStorage.getItem('podf_site_settings_v2') || localStorage.getItem(STORAGE_KEY);
       if (stored) {
         const parsed = JSON.parse(stored);
         if (!parsed.gheeProducts || !Array.isArray(parsed.gheeProducts)) {
@@ -167,6 +172,42 @@ document.addEventListener('DOMContentLoaded', () => {
   const elPriceBuffalo = document.getElementById('admPriceBuffalo');
   const elPricePaneer = document.getElementById('admPricePaneer');
 
+  // Neon PostgreSQL Database Connection Elements
+  const elNeonConnString = document.getElementById('admNeonConnString');
+  const dbStatusBadge = document.getElementById('dbStatusBadge');
+  const btnTestDbConnection = document.getElementById('btnTestDbConnection');
+  const btnSaveDbConfig = document.getElementById('btnSaveDbConfig');
+  const dbTestResult = document.getElementById('dbTestResult');
+
+  function updateDbBadge(isConnected, message) {
+    if (!dbStatusBadge) return;
+    if (isConnected) {
+      dbStatusBadge.textContent = '🟢 Connected to Neon Postgres (Sync Active)';
+      dbStatusBadge.className = 'badge-status badge-active';
+      dbStatusBadge.style.background = '#e6f4ea';
+      dbStatusBadge.style.color = '#137333';
+    } else if (message) {
+      dbStatusBadge.textContent = '🔴 ' + message;
+      dbStatusBadge.className = 'badge-status';
+      dbStatusBadge.style.background = '#fde8e8';
+      dbStatusBadge.style.color = '#9b1c1c';
+    } else {
+      dbStatusBadge.textContent = '⚪ Local Storage Only (Not Synced)';
+      dbStatusBadge.className = 'badge-status badge-hidden';
+      dbStatusBadge.style.background = '#f1f3f4';
+      dbStatusBadge.style.color = '#5f6368';
+    }
+  }
+
+  async function checkDbConnectionStatus() {
+    if (!db) {
+      updateDbBadge(false);
+      return;
+    }
+    const test = await db.testConnection();
+    updateDbBadge(test.ok, test.ok ? null : (db.getNeonConfig().neonConnectionString ? 'Connection Error' : null));
+  }
+
   // Previews
   const prevA1 = document.getElementById('prevA1');
   const prevA2 = document.getElementById('prevA2');
@@ -181,6 +222,11 @@ document.addEventListener('DOMContentLoaded', () => {
     if (elSecondaryPhone) elSecondaryPhone.value = currentSettings.secondaryPhone || DEFAULT_SETTINGS.secondaryPhone;
     if (elFssaiNo) elFssaiNo.value = currentSettings.fssaiNo || DEFAULT_SETTINGS.fssaiNo;
     if (elAddress) elAddress.value = currentSettings.address || DEFAULT_SETTINGS.address;
+
+    if (db && elNeonConnString && !elNeonConnString.value) {
+      const cfg = db.getNeonConfig();
+      elNeonConnString.value = cfg.neonConnectionString || '';
+    }
 
     const p = currentSettings.prices || DEFAULT_SETTINGS.prices;
     if (elPriceA1) elPriceA1.value = p.a1 || 65;
@@ -197,7 +243,38 @@ document.addEventListener('DOMContentLoaded', () => {
     if (imgs.logo && prevLogo) prevLogo.src = imgs.logo;
 
     renderAdminGheeList();
+    checkDbConnectionStatus();
   }
+
+  // Neon Connection Button Handlers
+  btnTestDbConnection?.addEventListener('click', async () => {
+    if (!db) return;
+    if (dbTestResult) {
+      dbTestResult.style.color = '#6f7a67';
+      dbTestResult.textContent = 'Testing connection to Neon PostgreSQL...';
+    }
+    const test = await db.testConnection(elNeonConnString?.value);
+    if (dbTestResult) {
+      dbTestResult.style.color = test.ok ? '#137333' : '#b42318';
+      dbTestResult.textContent = (test.ok ? '✅ ' : '❌ ') + test.message;
+    }
+    updateDbBadge(test.ok, test.ok ? null : 'Failed');
+  });
+
+  btnSaveDbConfig?.addEventListener('click', async () => {
+    if (!db) return;
+    db.setNeonConfig(elNeonConnString?.value);
+    showToast('Neon database credentials saved!');
+    checkDbConnectionStatus();
+
+    // Immediately fetch from database to load live data
+    const res = await db.fetchSettingsFromDatabase();
+    if (res && res.data && res.source !== 'cache_fallback') {
+      currentSettings = res.data;
+      populateForm();
+      showToast('Loaded latest settings from Neon PostgreSQL database!');
+    }
+  });
 
   // Handle File Input Change to Base64
   function setupFileHandler(fileInputId, imgPreviewId, keyName) {
@@ -268,8 +345,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     adminGheeList.innerHTML = list.map((item, idx) => {
       const isVisible = item.visible !== false;
-      const statusBadge = isVisible 
-        ? `<span class="badge-status badge-active">Active (Visible)</span>` 
+      const statusBadge = isVisible
+        ? `<span class="badge-status badge-active">Active (Visible)</span>`
         : `<span class="badge-status badge-hidden">Hidden</span>`;
       const itemImg = item.image || 'assets/pure_ghee.jpg';
 
@@ -437,7 +514,11 @@ document.addEventListener('DOMContentLoaded', () => {
   // 4. Save & Reset Handlers
   // --------------------------------------------------------------------------
   const btnSave = document.getElementById('btnSaveAdmin');
-  btnSave?.addEventListener('click', () => {
+  btnSave?.addEventListener('click', async () => {
+    btnSave.disabled = true;
+    const origText = btnSave.innerHTML;
+    btnSave.innerHTML = '⏳ Saving to Database...';
+
     currentSettings.primaryPhone = elPrimaryPhone?.value.trim() || DEFAULT_SETTINGS.primaryPhone;
     currentSettings.secondaryPhone = elSecondaryPhone?.value.trim() || DEFAULT_SETTINGS.secondaryPhone;
     currentSettings.fssaiNo = elFssaiNo?.value.trim() || DEFAULT_SETTINGS.fssaiNo;
@@ -450,11 +531,27 @@ document.addEventListener('DOMContentLoaded', () => {
       paneer: parseFloat(elPricePaneer?.value) || 120
     };
 
-    try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(currentSettings));
-      showToast('All changes saved successfully! Live website updated.');
-    } catch (err) {
-      alert('Could not save to localStorage (storage quota may be exceeded). Try uploading smaller images.');
+    let res = null;
+    if (db && typeof db.saveSettingsToDatabase === 'function') {
+      res = await db.saveSettingsToDatabase(currentSettings);
+    } else {
+      try {
+        localStorage.setItem('podf_site_settings_v2', JSON.stringify(currentSettings));
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(currentSettings));
+        res = { savedLocally: true, savedRemote: false };
+      } catch (err) {
+        alert('Could not save to localStorage (storage quota may be exceeded). Try uploading smaller images.');
+      }
+    }
+
+    btnSave.disabled = false;
+    btnSave.innerHTML = origText;
+
+    if (res && res.savedRemote) {
+      showToast('✅ All changes saved permanently in Neon PostgreSQL! Live across all devices.');
+      checkDbConnectionStatus();
+    } else {
+      showToast(res?.warning || 'Saved locally in this browser. Configure Neon connection string above to sync across all devices.');
     }
   });
 
@@ -462,7 +559,8 @@ document.addEventListener('DOMContentLoaded', () => {
   btnReset?.addEventListener('click', () => {
     if (confirm('Are you sure you want to reset all prices, Ghee products, numbers and images to default settings?')) {
       localStorage.removeItem(STORAGE_KEY);
-      currentSettings = JSON.parse(JSON.stringify(DEFAULT_SETTINGS));
+      localStorage.removeItem('podf_site_settings_v2');
+      currentSettings = db ? db.getDefaultSettings() : JSON.parse(JSON.stringify(DEFAULT_SETTINGS));
       populateForm();
       showToast('Reset to original default settings!');
     }
@@ -490,4 +588,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Initial Load
   populateForm();
+
+  // Async sync from database on load
+  if (db && typeof db.fetchSettingsFromDatabase === 'function') {
+    db.fetchSettingsFromDatabase().then((res) => {
+      if (res && res.data && res.source !== 'cache_fallback') {
+        currentSettings = res.data;
+        populateForm();
+      }
+    });
+  }
 });
