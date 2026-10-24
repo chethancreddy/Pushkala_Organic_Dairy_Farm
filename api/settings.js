@@ -74,10 +74,10 @@ async function executeNeonSql(connString, query, params = []) {
   if (neonDriver) {
     try {
       const sql = neonDriver(connString, { fullResults: true });
-      const result = await sql.query(query, params);
+      const result = await sql(query, params);
       return {
-        rows: result.rows || [],
-        rowCount: result.rowCount || 0
+        rows: result.rows || result || [],
+        rowCount: (result.rows ? result.rows.length : (Array.isArray(result) ? result.length : 0))
       };
     } catch (driverErr) {
       console.warn('[executeNeonSql] Driver query warning, checking HTTP fallback:', driverErr.message);
@@ -91,7 +91,6 @@ async function executeNeonSql(connString, query, params = []) {
   const password = decodeURIComponent(u.password);
 
   const endpoint = `https://${host}/sql`;
-  const auth = 'Basic ' + Buffer.from(`${username}:${password}`).toString('base64');
 
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), 8000);
@@ -99,7 +98,7 @@ async function executeNeonSql(connString, query, params = []) {
   const res = await fetch(endpoint, {
     method: 'POST',
     headers: {
-      'Authorization': auth,
+      'Neon-Connection-String': connString,
       'Content-Type': 'application/json'
     },
     body: JSON.stringify({ query, params }),

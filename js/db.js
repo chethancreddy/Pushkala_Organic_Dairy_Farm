@@ -123,16 +123,13 @@
     const username = decodeURIComponent(u.username);
     const password = decodeURIComponent(u.password);
 
-    const endpoint = `https://${host}/sql`;
-    const auth = 'Basic ' + btoa(`${username}:${password}`);
-
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 8000);
 
     const res = await fetch(endpoint, {
       method: 'POST',
       headers: {
-        'Authorization': auth,
+        'Neon-Connection-String': connString,
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({ query, params: params || [] }),
